@@ -1,0 +1,61 @@
+[project]
+name = "warden"
+version = "0.1.0"
+description = "A permission and approval gateway for LLM agents with write access."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "alembic",
+    "asyncpg",
+    "fastapi",
+    "httpx",
+    "pydantic",
+    "pydantic-settings",
+    "pyyaml",
+    "sqlalchemy",
+    "structlog",
+    "uvicorn",
+]
+
+[dependency-groups]
+dev = [
+    "hypothesis",
+    "mypy",
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["ALL"]
+extend-select = ["RUF001", "RUF002", "RUF003"]
+ignore = [
+    "COM812",
+    "CPY001",
+    "D203",
+    "D213",
+    "ISC001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/**" = ["INP001"]
+"tests/**" = ["INP001", "S101"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["warden"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers -p no:cacheprovider"
+asyncio_mode = "auto"
+filterwarnings = ["error"]
+pythonpath = ["src"]
+testpaths = ["tests"]
