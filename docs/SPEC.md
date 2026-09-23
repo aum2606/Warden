@@ -809,30 +809,31 @@ Answer quality of the agents, model output style, UI visual regression. All thre
 
 ## 19. Build phases
 
-Fourteen sessions, each a self-contained unit of work with a stated exit condition. A session ends when its exit condition passes, not when time runs out; a session that overruns splits rather than spills.
+Fifteen sessions numbered 0 through 14, each a self-contained unit of work with a stated exit condition. A session ends when its exit condition passes, not when time runs out; a session that overruns splits rather than spills.
 
 The ordering is deliberate: the policy engine is built **before** anything that calls it, and the first end-to-end path is built early and stays green. Nothing here is a week.
 
 | # | Session | Objective | Exit condition |
 | --- | --- | --- | --- |
-| 1 | Skeleton | Repo, FastAPI app, Postgres + pgvector via compose, migrations, CI running an empty suite, module directories with import-boundary test | `docker compose up` serves a health check; CI green |
-| 2 | Identity | Organizations, users, agents, sessions, roles, authority computation as a pure function | Authority intersection unit-tested including delegation narrowing |
-| 3 | Policy engine I | Bundle loader, schema validation, matcher, pure condition evaluator | 15 fixtures pass; invalid bundle refuses to load |
-| 4 | Policy engine II | Effect combiner, default deny, decision recorder, `/policies/simulate` | Full fixture set green; simulate returns decision without recording |
-| 5 | Capability | Minting, signing, canonicalization, verification, single-use consumption | Replay, expiry, fingerprint-mismatch and concurrent double-consume tests pass |
-| 6 | Broker + first connector | Broker verification path, connector interface, GitHub connector with fake and live modes | Capability-gated GitHub issue created against a test repo |
-| 7 | First vertical slice | Minimal runtime: single agent, stubbed model, one tool, full path intent → decision → capability → execution → audit | Scenario test: a scripted run creates an issue and produces a complete event stream |
-| 8 | Audit + trace | Event schema, append-only constraints, trace reconstruction, recompute endpoint | Run reconstructed from fixture events with no live calls; recompute verifies a stored decision |
-| 9 | Knowledge | Ingestion, chunking, embedding, retrieval with provenance, trust levels, `context_digest` | Retrieval returns trust-tagged chunks; citation resolves to source offsets |
-| 10 | Approvals | Escalation path, approval request lifecycle, expiry, approve-with-edit, run suspension and resume | Scenario test: escalate, approve with edited recipient, execute against edited params |
-| 11 | Delegation | Orchestrator agent, delegation manager, narrowing, refusal on widening, authority chain | Scenario test: widening attempt refused and recorded; two-agent run completes |
-| 12 | Gmail connector + injection scenario | Gmail connector, external-send policy, poisoned seed document, memory taint | Scenario test: injection attempt denied with both conditions named |
-| 13 | UI | Streamlit app: five pages against the live API over HTTP only, simulator, trace viewer, approval queue | All three demo paths driveable end to end in the browser |
-| 14 | Deploy and harden | Single image on Hugging Face Spaces, Neon database, secrets, migrations on boot, seed command, README, demo script, metrics page | S1–S7 all demonstrable on the deployed instance by a stranger |
+| 0 | Bootstrap | Repo, FastAPI app, Postgres + pgvector via compose, migrations, CI running an empty suite, module directories with import-boundary test | `docker compose up` serves a health check; CI green |
+| 1 | Identity | Organizations, users, agents, sessions, roles, authority computation as a pure function | Authority intersection unit-tested including delegation narrowing; seeded users can log in as all three roles |
+| 2 | Policy bundle loading and matching | Bundle loader, schema validation, digest, matcher, policy directory, decision input dataclass | A valid bundle loads with a stable digest, an invalid bundle is refused with the offending document named, and matching is tested |
+| 3 | Condition evaluator | Pure expression evaluator, per-condition results, fixture runner, and at least 15 fixtures | At least 15 fixtures pass; repeated evaluation with the same input produces identical results |
+| 4 | Effects, default deny, and decision recording | Effect combiner, restrictive conflict handling, default deny, immutable decisions, `/policies/simulate`, `/policies` | Full fixture set green; simulate records nothing; an attempted decision update fails at the database |
+| 5 | Capabilities | Minting, signing, canonicalization, verification, and single-use consumption | Replay, expiry, fingerprint mismatch, wrong-run, concurrent double-consume, and canonicalization property tests pass |
+| 6 | Broker and GitHub connector | Broker verification, connector protocol, credential isolation, GitHub fake and live modes, executions schema | A capability-gated issue is created through the fake connector and the live flow works when configured |
+| 7 | First governed vertical slice | Runs, steps, run state machine, scripted model provider, tool loop, guards, and run endpoints | A scripted run creates an issue through the full path and the runtime-to-broker boundary test passes |
+| 8 | Audit trail and trace reconstruction | Append-only audit events, all event kinds, trace reconstruction, audit endpoints, decision recompute | A run reconstructs from events alone and recompute verifies a stored decision |
+| 9 | Knowledge and retrieval | Knowledge tables, loaders, normalizer, chunker, local embeddings, provenance-aware retrieval, trust levels, context digest | Retrieval returns trust-tagged chunks, a citation resolves correctly, and context digest reflects minimum trust |
+| 10 | Approvals | Approval lifecycle, escalation details, suspension and resume, expiry, approve-with-edit, role enforcement | A scenario escalates, approves an edited recipient, and executes only the edited parameters |
+| 11 | Delegation | Delegation persistence, authority chain, orchestrator, monotonic narrowing, widening refusal, depth cap | A widening attempt is refused and recorded, and a two-agent run completes with its authority chain visible |
+| 12 | Gmail connector and injection scenario | Gmail connector, external-send policy, governed memory, poisoned document, blocked-injection scenario | Allowed, approval, and blocked-injection scenarios pass with both failed conditions named |
+| 13 | Streamlit interface | Five Streamlit pages over HTTP only with simulator, trace viewer, approval queue, and acting-as selector | All three demo paths are driveable end to end and the UI import-boundary test passes |
+| 14 | Deployment | Single image, external Postgres, boot migrations, idempotent seed, secrets, README, and demo documentation | The public seeded application demonstrates success criteria S1 through S7 |
 
 ### Why this order
 
-**Sessions 3–5 before 7.** Building the runtime first and retrofitting governance produces a system where the gate is a middleware someone could remove. Building the gate first means the runtime is written against an interface that never allowed direct execution.
+**Sessions 2–5 before 7.** Building the runtime first and retrofitting governance produces a system where the gate is a middleware someone could remove. Building the gate first means the runtime is written against an interface that never allowed direct execution.
 
 **Session 7 is the pivot.** After it, a complete governed path exists end to end. Everything after is widening that path, and at no point afterwards is the system in a state that cannot be demonstrated.
 
@@ -860,7 +861,7 @@ Each of these changes what gets built. They are cheap to settle now and expensiv
 | D5 | Second agent's identity | Generic `ops-worker`, or a named role | Generic. A named role reintroduces the AI-employee framing this project is defined against |
 | D6 | Relationship to Northstar SupportAI | Keep separate, or fold Northstar's CX vertical in as Warden's demo domain | Keep separate for now, but decide before session 12 — the seeded corpus and demo scenario depend on which domain you pick |
 | D7 | Hosting | Hugging Face Spaces (Docker), Fly.io, or a small VM | Settled: Spaces free tier plus Neon free Postgres, for a permanently $0 public URL (Section 21) |
-| D8 | Public repo timing | Public from session 1, or private until session 14 | Public from the start: the commit history showing the gate built before the runtime is itself evidence of the design discipline |
+| D8 | Public repo timing | Public from session 0, or private until session 14 | Public from the start: the commit history showing the gate built before the runtime is itself evidence of the design discipline |
 
 ### Assumptions to confirm
 
@@ -870,7 +871,7 @@ Each of these changes what gets built. They are cheap to settle now and expensiv
 
 ### Next step
 
-Settle D1, D2, D3 and D6, then session 1 can start. The remaining decisions can wait until the session that needs them.
+Settle D1, D2, D3 and D6, then session 0 can start. The remaining decisions can wait until the session that needs them.
 
 ## 21. Cost model and free-tier stack
 
@@ -903,7 +904,7 @@ Figures below are as published in mid-2026 and worth re-checking before relying 
 
 | Need | Choice | Cost | Notes |
 | --- | --- | --- | --- |
-| Development | Docker Compose locally | $0 | Postgres + pgvector + app, no cloud dependency during sessions 1–12 |
+| Development | Docker Compose locally | $0 | Postgres + pgvector + app, no cloud dependency during sessions 0–12 |
 | Hosting | Hugging Face Spaces, Docker SDK | $0 | CPU Basic is 2 vCPU / 16 GB RAM, free and public. Must listen on port 7860. One container serving FastAPI and Streamlit together |
 | Database | Neon free tier | $0 | 0.5 GB, 1 project, 10 branches, pgvector available. Branching is genuinely useful for the seeded demo database |
 | Database (alternative) | Supabase free tier | $0 | 500 MB with pgvector, but free projects pause after 7 days of inactivity — bad for a portfolio URL someone visits unannounced |
