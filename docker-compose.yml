@@ -1,0 +1,32 @@
+services:
+  database:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: warden
+      POSTGRES_PASSWORD: warden
+      POSTGRES_USER: warden
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U warden -d warden"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  application:
+    build:
+      context: .
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://warden:warden@database:5432/warden
+      ENVIRONMENT: development
+      LOG_LEVEL: INFO
+    ports:
+      - "${WARDEN_PORT:-8000}:8000"
+
+volumes:
+  postgres_data:
