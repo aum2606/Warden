@@ -66,3 +66,24 @@ and platform line endings. A later input resolver must map persisted principals
 to their stable policy-facing identifiers before matching.
 
 **Spec impact.** Clarifies Sections 5 and 6; no schema change.
+
+## 2026-09-24 - Restricted condition expression language
+
+**Context.** Section 6 shows condition syntax and Section 20 leans toward a
+custom mini-language, but neither defines its parser, error semantics, or trust
+label ordering.
+
+**Decision.** Conditions use a handwritten allowlisted grammar rather than
+Python evaluation or a general expression runtime. It supports field access on
+`params`, `context`, `run`, and `environment`; typed comparisons; `endsWith`;
+membership; `all`; and `and`, `or`, and `not`. Expression or type errors return a
+failed condition. Trust labels compare in the explicit order `untrusted <
+internal < trusted`; other strings compare lexically. Time is ordinary data under
+`environment` and the evaluator has no clock interface.
+
+**Consequence.** Policy expressions cannot import modules, call arbitrary
+functions, access process state, or perform I/O. Evaluation is deterministic for
+the same expression and decision input, and malformed conditions fail closed.
+
+**Spec impact.** Settles D2 for the condition language and clarifies Sections 5,
+6, and 10.
