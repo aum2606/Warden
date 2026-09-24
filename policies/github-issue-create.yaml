@@ -1,0 +1,15 @@
+version: 1
+id: github-issue-create
+description: The operations worker may create GitHub issues
+priority: 100
+match:
+  tool: github.issue.create
+  principal:
+    kind: agent
+    id: [ops-worker]
+conditions: []
+effect:
+  when_all_true: allow
+  when_any_false: deny
+escalation: null
+obligations: []

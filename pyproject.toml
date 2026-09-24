@@ -36,6 +36,7 @@ dev = [
     "pytest",
     "pytest-asyncio",
     "ruff",
+    "types-pyyaml",
 ]
 
 [tool.ruff]

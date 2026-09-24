@@ -48,3 +48,21 @@ or a run ceiling without accidentally producing an empty scope or widening the
 result.
 
 **Spec impact.** Clarifies Section 5 Rule 2; no schema change.
+
+## 2026-09-24 - Canonical policy bundles and logical selectors
+
+**Context.** Section 6 defines the policy document shape and shows agent slugs in
+principal selectors, but it does not define digest canonicalization, duplicate
+rule handling, wildcard syntax, or how persisted UUIDs map to authored policy.
+
+**Decision.** Version 1 policy documents reject undeclared fields and invalid
+scalar types. Policy selectors use logical principal identifiers such as agent
+slugs, with `*` as the explicit tool, principal-kind, or principal-id wildcard.
+A bundle rejects duplicate rule ids and computes its SHA-256 source digest over
+canonical JSON representations of all validated documents sorted by rule id.
+
+**Consequence.** Digests are stable across file enumeration, YAML formatting,
+and platform line endings. A later input resolver must map persisted principals
+to their stable policy-facing identifiers before matching.
+
+**Spec impact.** Clarifies Sections 5 and 6; no schema change.

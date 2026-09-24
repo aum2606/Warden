@@ -1,0 +1,15 @@
+version: 1
+id: default-deny
+description: Actions not authorized by a more specific rule are denied
+priority: -1000000
+match:
+  tool: "*"
+  principal:
+    kind: "*"
+    id: ["*"]
+conditions: []
+effect:
+  when_all_true: deny
+  when_any_false: deny
+escalation: null
+obligations: []

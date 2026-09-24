@@ -1,0 +1,24 @@
+version: 1
+id: memory-org-write
+description: Organization-scoped memory writes require approval
+priority: 100
+match:
+  tool: memory.write
+  principal:
+    kind: agent
+    id: ["*"]
+conditions:
+  - id: org-scope
+    expr: params.scope == "org"
+effect:
+  when_all_true: escalate
+  when_any_false: allow
+escalation:
+  approvers: [role:approver]
+  ttl_seconds: 900
+  show:
+    - params.scope
+    - params.key
+    - params.value
+    - context.sources
+obligations: []
