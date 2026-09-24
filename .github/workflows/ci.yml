@@ -10,6 +10,24 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: warden
+          POSTGRES_PASSWORD: warden
+          POSTGRES_USER: warden
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U warden -d warden"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+asyncpg://warden:warden@127.0.0.1:5432/warden
+      SESSION_SIGNING_SECRET: ci-session-signing-secret-with-32-characters
+      TEST_DATABASE_URL: postgresql+asyncpg://warden:warden@127.0.0.1:5432/warden
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

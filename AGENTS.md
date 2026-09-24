@@ -20,7 +20,7 @@ so; do not resolve the conflict by writing different code.
 | --- | --- |
 | `docs/SPEC.md` | The full specification: domain model, authorization model, data model, architecture |
 | `docs/ARCHITECTURE.md` | Module boundaries and the import rules |
-| `docs/SESSIONS.md` | The fourteen build sessions with objectives and exit conditions |
+| `docs/SESSIONS.md` | The fifteen build sessions with objectives and exit conditions |
 | `DECISIONS.md` | Every implementation decision the spec did not cover |
 
 ## Working rules

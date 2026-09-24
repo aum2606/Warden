@@ -7,12 +7,13 @@ ENV PATH=/app/.venv/bin:$PATH \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
 
-COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev
+COPY pyproject.toml uv.lock README.md ./
+RUN uv sync --frozen --no-dev --no-install-project
 
 COPY alembic.ini ./
 COPY alembic ./alembic
 COPY src ./src
+RUN uv sync --frozen --no-dev
 
 EXPOSE 8000
 
