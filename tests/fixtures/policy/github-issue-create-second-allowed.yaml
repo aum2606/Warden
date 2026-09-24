@@ -1,0 +1,13 @@
+name: second-github-issue-create-is-allowed
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: github.issue.create
+  params: {repo: aum2606/Warden, title: Second issue}
+  context: {min_trust: internal, sources: [chunk-2]}
+  run: {run_id: run-github-2, elapsed_steps: 4, prior_denials: 0}
+  environment: {current_time: "2026-09-24T10:00:00Z", org_settings: {}}
+expect:
+  effect: allow
+  rule: github-issue-create
+  failed_conditions: []

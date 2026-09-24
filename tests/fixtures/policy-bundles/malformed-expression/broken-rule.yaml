@@ -1,0 +1,15 @@
+version: 1
+id: broken-rule
+description: Malformed fixture expression must fail closed
+priority: 100
+match:
+  tool: fixture.malformed
+  principal: {kind: agent, id: [fixture-agent]}
+conditions:
+  - {id: broken, expr: "params.value + 1", on_fail: escalate}
+effect: {when_all_true: allow, combine: most_restrictive}
+escalation:
+  approvers: [role:approver]
+  ttl_seconds: 900
+  show: []
+obligations: []

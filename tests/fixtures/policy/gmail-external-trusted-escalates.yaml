@@ -1,0 +1,13 @@
+name: trusted-input-does-not-bypass-external-recipient-approval
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: gmail.send
+  params: {to: [reviewer@outside.example], subject: Review, attachment_count: 0}
+  context: {min_trust: trusted, sources: [chunk-reviewed]}
+  run: {run_id: run-mail-trusted-external, elapsed_steps: 2, prior_denials: 0}
+  environment: {current_time: "2026-09-24T10:03:00Z", org_settings: {}}
+expect:
+  effect: escalate
+  rule: gmail-external-send
+  failed_conditions: [recipient-domain]

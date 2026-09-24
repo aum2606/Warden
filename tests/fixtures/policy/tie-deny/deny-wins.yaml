@@ -1,0 +1,13 @@
+name: same-priority-deny-wins-conflict
+input:
+  principal: agent:fixture-agent
+  authority_chain: [user:aum, agent:fixture-agent]
+  tool: fixture.tie-deny
+  params: {}
+  context: {}
+  run: {run_id: run-tie-deny, elapsed_steps: 1, prior_denials: 0}
+  environment: {current_time: "2026-09-24T11:01:00Z", org_settings: {}}
+expect:
+  effect: deny
+  rule: deny-rule
+  failed_conditions: [blocked]

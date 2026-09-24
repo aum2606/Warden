@@ -1,0 +1,12 @@
+version: 1
+id: lower-deny
+description: Lower priority fixture rule denies the action
+priority: 100
+match:
+  tool: fixture.priority
+  principal: {kind: agent, id: [fixture-agent]}
+conditions:
+  - {id: blocked, expr: "false", on_fail: deny}
+effect: {when_all_true: allow, combine: most_restrictive}
+escalation: null
+obligations: []

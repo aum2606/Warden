@@ -1,6 +1,5 @@
 """Loading and condition execution for offline policy decision fixtures."""
 
-from dataclasses import dataclass
 from pathlib import Path
 from typing import NewType
 
@@ -9,9 +8,8 @@ from pydantic import ValidationError
 
 from warden.identity.types import PrincipalKind
 
+from .engine import DecisionResult, PolicyEngine
 from .errors import InvalidPolicyFixtureError
-from .evaluator import ConditionResult, evaluate_conditions
-from .matcher import match_rules
 from .models import (
     ConditionId,
     PolicyEffect,
@@ -53,14 +51,6 @@ class PolicyFixture(StrictPolicyModel):
     expect: PolicyFixtureExpectation
 
 
-@dataclass(frozen=True, slots=True)
-class FixtureConditionRun:
-    """Capture the rule and per-condition results produced for a fixture."""
-
-    rule_id: PolicyRuleId
-    condition_results: tuple[ConditionResult, ...]
-
-
 def load_policy_fixture(path: Path) -> PolicyFixture:
     """Load and validate one offline fixture document."""
     try:
@@ -70,18 +60,10 @@ def load_policy_fixture(path: Path) -> PolicyFixture:
         raise InvalidPolicyFixtureError(path.name, str(error)) from error
 
 
-def run_policy_fixture(bundle: PolicyBundle, fixture: PolicyFixture) -> FixtureConditionRun:
-    """Match the expected rule and evaluate its conditions without resolving effects."""
+def run_policy_fixture(bundle: PolicyBundle, fixture: PolicyFixture) -> DecisionResult:
+    """Evaluate one fixture against a complete policy bundle."""
     decision_input = _decision_input(fixture.input)
-    matching_rules = match_rules(bundle, decision_input.tool, decision_input.principal)
-    if not matching_rules or matching_rules[0].id != fixture.expect.rule:
-        message = f"expected rule {fixture.expect.rule!s} did not match"
-        raise InvalidPolicyFixtureError(fixture.name, message)
-    rule = matching_rules[0]
-    return FixtureConditionRun(
-        rule_id=rule.id,
-        condition_results=evaluate_conditions(rule.conditions, decision_input),
-    )
+    return PolicyEngine(bundle).evaluate(decision_input)
 
 
 def _decision_input(fixture_input: PolicyFixtureInput) -> DecisionInput:

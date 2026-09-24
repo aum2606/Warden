@@ -1,0 +1,11 @@
+version: 1
+id: higher-allow
+description: Higher priority fixture rule permits the action
+priority: 200
+match:
+  tool: fixture.priority
+  principal: {kind: agent, id: [fixture-agent]}
+conditions: []
+effect: {when_all_true: allow, combine: most_restrictive}
+escalation: null
+obligations: []

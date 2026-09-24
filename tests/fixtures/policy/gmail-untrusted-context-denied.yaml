@@ -1,4 +1,4 @@
-name: untrusted-context-fails-the-trust-floor
+name: untrusted-context-is-denied
 input:
   principal: agent:ops-worker
   authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
@@ -18,6 +18,6 @@ input:
     current_time: "2026-09-24T09:10:00Z"
     org_settings: {}
 expect:
-  effect: escalate
+  effect: deny
   rule: gmail-external-send
   failed_conditions: [clean-provenance]

@@ -91,6 +91,7 @@ class ConditionResult:
 
     id: ConditionId
     passed: bool
+    error: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -296,7 +297,7 @@ def evaluate_condition(
             _evaluate(expression, decision_input, _MISSING_CURRENT_ITEM),
         )
     except PolicyExpressionError:
-        passed = False
+        return ConditionResult(id=condition.id, passed=False, error=True)
     return ConditionResult(id=condition.id, passed=passed)
 
 

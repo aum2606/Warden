@@ -1,0 +1,13 @@
+name: malformed-expression-fails-closed-to-deny
+input:
+  principal: agent:fixture-agent
+  authority_chain: [user:aum, agent:fixture-agent]
+  tool: fixture.malformed
+  params: {value: 1}
+  context: {}
+  run: {run_id: run-malformed, elapsed_steps: 1, prior_denials: 0}
+  environment: {current_time: "2026-09-24T11:04:00Z", org_settings: {}}
+expect:
+  effect: deny
+  rule: broken-rule
+  failed_conditions: [broken]
