@@ -1,0 +1,11 @@
+version: 1
+id: a-rule
+description: First deterministic fixture rule
+priority: 100
+match:
+  tool: fixture.multiple
+  principal: {kind: agent, id: [fixture-agent]}
+conditions: []
+effect: {when_all_true: allow, combine: most_restrictive}
+escalation: null
+obligations: []

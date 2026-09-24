@@ -1,0 +1,13 @@
+name: human-memory-write-is-denied
+input:
+  principal: user:aum
+  authority_chain: [user:aum]
+  tool: memory.write
+  params: {scope: run, key: release, value: Friday}
+  context: {min_trust: trusted, sources: []}
+  run: {run_id: run-default-user-memory, elapsed_steps: 1, prior_denials: 0}
+  environment: {current_time: "2026-09-24T10:16:00Z", org_settings: {}}
+expect:
+  effect: deny
+  rule: default-deny
+  failed_conditions: [default-deny]

@@ -1,0 +1,13 @@
+name: multiple-equal-matches-use-deterministic-rule-id
+input:
+  principal: agent:fixture-agent
+  authority_chain: [user:aum, agent:fixture-agent]
+  tool: fixture.multiple
+  params: {}
+  context: {}
+  run: {run_id: run-multiple, elapsed_steps: 1, prior_denials: 0}
+  environment: {current_time: "2026-09-24T11:03:00Z", org_settings: {}}
+expect:
+  effect: allow
+  rule: a-rule
+  failed_conditions: []

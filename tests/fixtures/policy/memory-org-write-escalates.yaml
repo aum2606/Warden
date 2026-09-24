@@ -20,4 +20,4 @@ input:
 expect:
   effect: escalate
   rule: memory-org-write
-  failed_conditions: []
+  failed_conditions: [non-org-scope]

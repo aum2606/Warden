@@ -1,0 +1,13 @@
+name: higher-priority-allow-wins-over-lower-deny
+input:
+  principal: agent:fixture-agent
+  authority_chain: [user:aum, agent:fixture-agent]
+  tool: fixture.priority
+  params: {}
+  context: {}
+  run: {run_id: run-priority, elapsed_steps: 1, prior_denials: 0}
+  environment: {current_time: "2026-09-24T11:00:00Z", org_settings: {}}
+expect:
+  effect: allow
+  rule: higher-allow
+  failed_conditions: []

@@ -1,0 +1,15 @@
+version: 1
+id: escalate-rule
+description: Equal priority fixture rule escalates the action
+priority: 100
+match:
+  tool: fixture.tie-escalate
+  principal: {kind: agent, id: [fixture-agent]}
+conditions:
+  - {id: review, expr: "false", on_fail: escalate}
+effect: {when_all_true: allow, combine: most_restrictive}
+escalation:
+  approvers: [role:approver]
+  ttl_seconds: 900
+  show: []
+obligations: []

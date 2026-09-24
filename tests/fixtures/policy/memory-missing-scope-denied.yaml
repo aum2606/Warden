@@ -1,0 +1,13 @@
+name: missing-memory-scope-fails-closed
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: memory.write
+  params: {key: release, value: Friday}
+  context: {min_trust: internal, sources: []}
+  run: {run_id: run-memory-missing, elapsed_steps: 2, prior_denials: 0}
+  environment: {current_time: "2026-09-24T10:13:00Z", org_settings: {}}
+expect:
+  effect: deny
+  rule: memory-org-write
+  failed_conditions: [non-org-scope]

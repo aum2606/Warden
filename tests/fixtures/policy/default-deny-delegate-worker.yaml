@@ -1,0 +1,13 @@
+name: worker-delegation-is-denied
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: delegate
+  params: {agent: orchestrator, scope: [github.issue.create]}
+  context: {min_trust: internal, sources: []}
+  run: {run_id: run-default-worker-delegate, elapsed_steps: 2, prior_denials: 0}
+  environment: {current_time: "2026-09-24T10:15:00Z", org_settings: {}}
+expect:
+  effect: deny
+  rule: default-deny
+  failed_conditions: [default-deny]

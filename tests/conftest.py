@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from warden.app import create_app
 from warden.config import Settings
 from warden.database import AsyncSessionFactory, create_database_engine, create_session_factory
-from warden.identity.models import IdentityBase
+from warden.policy.records import DecisionRecord
 
 _TEST_SIGNING_SECRET = "test-session-signing-secret-with-32-chars"
 
@@ -38,8 +38,8 @@ async def database_engine(settings: Settings) -> AsyncIterator[AsyncEngine]:
     """Create a clean identity schema for each database-backed test."""
     engine = create_database_engine(settings.database_url)
     async with engine.begin() as connection:
-        await connection.run_sync(IdentityBase.metadata.drop_all)
-        await connection.run_sync(IdentityBase.metadata.create_all)
+        await connection.run_sync(DecisionRecord.metadata.drop_all)
+        await connection.run_sync(DecisionRecord.metadata.create_all)
     yield engine
     await engine.dispose()
 

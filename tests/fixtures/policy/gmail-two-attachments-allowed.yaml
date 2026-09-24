@@ -1,0 +1,13 @@
+name: two-attachments-remain-within-the-size-bound
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: gmail.send
+  params: {to: [reviewer@acme.example], subject: Review, attachment_count: 2}
+  context: {min_trust: internal, sources: [chunk-2]}
+  run: {run_id: run-mail-two, elapsed_steps: 2, prior_denials: 0}
+  environment: {current_time: "2026-09-24T10:02:00Z", org_settings: {}}
+expect:
+  effect: allow
+  rule: gmail-external-send
+  failed_conditions: []

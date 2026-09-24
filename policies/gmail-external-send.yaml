@@ -10,13 +10,16 @@ match:
 conditions:
   - id: recipient-domain
     expr: 'all(params.to, {. endsWith "@acme.example"})'
+    on_fail: escalate
   - id: clean-provenance
     expr: 'context.min_trust >= "internal"'
+    on_fail: deny
   - id: size-bound
     expr: params.attachment_count <= 3
+    on_fail: escalate
 effect:
   when_all_true: allow
-  when_any_false: escalate
+  combine: most_restrictive
 escalation:
   approvers: [role:approver]
   ttl_seconds: 900

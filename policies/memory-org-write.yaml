@@ -8,11 +8,12 @@ match:
     kind: agent
     id: ["*"]
 conditions:
-  - id: org-scope
-    expr: params.scope == "org"
+  - id: non-org-scope
+    expr: 'params.scope in ["run", "agent"]'
+    on_fail: escalate
 effect:
-  when_all_true: escalate
-  when_any_false: allow
+  when_all_true: allow
+  combine: most_restrictive
 escalation:
   approvers: [role:approver]
   ttl_seconds: 900

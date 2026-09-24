@@ -87,3 +87,55 @@ the same expression and decision input, and malformed conditions fail closed.
 
 **Spec impact.** Settles D2 for the condition language and clarifies Sections 5,
 6, and 10.
+
+## 2026-09-24 - Condition-level failure effects
+
+**Context.** The aggregate `when_any_false` effect could not express the
+specified Gmail behavior: an external recipient may be approved, while
+untrusted provenance must be denied even when both conditions fail together.
+
+**Decision.** Every condition declares `on_fail` as either `deny` or
+`escalate`. A rule declares `when_all_true: allow` and
+`combine: most_restrictive`. Failed conditions combine in the fixed order
+`deny > escalate > allow`; failure count never changes severity. The explicit
+default-deny rule uses an always-false condition whose failure effect is deny.
+
+**Consequence.** Each failed condition independently communicates its required
+severity, decision records retain the exact failed condition ids, and adding a
+second failure cannot weaken an outcome.
+
+**Spec impact.** Replaces the aggregate effect shape in Section 6 and resolves
+the Gmail behavior described in Sections 11 and 18.
+
+## 2026-09-24 - Dedicated PostgreSQL application role
+
+**Context.** The local database login owns the schema, and PostgreSQL table
+owners retain implicit modification authority even after an explicit revoke.
+That cannot prove append-only decisions at the database boundary.
+
+**Decision.** Migrations run as the schema owner and create a `warden_app`
+role. Runtime connections assume that role. It receives ordinary application
+table permissions except `UPDATE` on `decisions`.
+
+**Consequence.** The application remains able to insert decisions but an
+attempted decision update fails at the database level. Local development keeps
+migration ownership separate from effective runtime authority.
+
+**Spec impact.** Implements the application-role constraint in Section 7.
+
+## 2026-09-24 - Defer decision run and step foreign keys
+
+**Context.** Session 4 introduces `decisions`, but its required `runs` and
+`steps` parent tables are not created until Session 7. The decision columns are
+required now for the specified record shape.
+
+**Decision.** Store `run_id` and `step_id` as non-null UUID columns in Session 4
+without foreign keys. Add their foreign-key constraints in the migration that
+creates the parent tables. `bundle_id` is constrained immediately because
+`policy_bundles` already exists.
+
+**Consequence.** Decision records already have their final identifiers and
+cannot omit them, while migrations never reference tables that do not exist.
+
+**Spec impact.** Stages the governance schema in Section 7 across its declared
+Session 4 and Session 7 build order.

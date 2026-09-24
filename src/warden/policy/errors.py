@@ -27,6 +27,14 @@ class PolicyExpressionError(PolicyError):
     """Report an expression that cannot be safely parsed or evaluated."""
 
 
+class PolicyEvaluationError(PolicyError):
+    """Report a policy decision that cannot be evaluated normally."""
+
+
+class DecisionRecordingError(PolicyError):
+    """Report a decision that could not be appended to durable storage."""
+
+
 class InvalidPolicyFixtureError(PolicyError):
     """Report a policy fixture that cannot be loaded or executed."""
 

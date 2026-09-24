@@ -12,6 +12,7 @@ from warden.policy.models import (
     ConditionId,
     Expression,
     PolicyCondition,
+    PolicyEffect,
     PrincipalSelectorId,
     ToolName,
 )
@@ -61,7 +62,11 @@ def _input(
 
 
 def _condition(expression: str, condition_id: str = "condition") -> PolicyCondition:
-    return PolicyCondition(id=ConditionId(condition_id), expr=Expression(expression))
+    return PolicyCondition(
+        id=ConditionId(condition_id),
+        expr=Expression(expression),
+        on_fail=PolicyEffect.DENY,
+    )
 
 
 @pytest.mark.parametrize(

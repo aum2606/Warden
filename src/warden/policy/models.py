@@ -49,13 +49,14 @@ class PolicyCondition(StrictPolicyModel):
 
     id: ConditionId
     expr: Expression
+    on_fail: Literal[PolicyEffect.DENY, PolicyEffect.ESCALATE]
 
 
 class PolicyEffectMap(StrictPolicyModel):
-    """Map aggregate condition outcomes to policy effects."""
+    """Declare the successful effect and condition conflict strategy."""
 
-    when_all_true: PolicyEffect
-    when_any_false: PolicyEffect
+    when_all_true: Literal[PolicyEffect.ALLOW]
+    combine: Literal["most_restrictive"]
 
 
 class PolicyEscalation(StrictPolicyModel):

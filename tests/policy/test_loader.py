@@ -22,7 +22,7 @@ match:
 conditions: []
 effect:
   when_all_true: allow
-  when_any_false: deny
+  combine: most_restrictive
 escalation: null
 obligations: []
 """
@@ -61,7 +61,7 @@ conditions: []
 match: {tool: sample.read, principal: {id: [sample-agent], kind: agent}}
 obligations: []
 escalation: null
-effect: {when_any_false: deny, when_all_true: allow}
+effect: {combine: most_restrictive, when_all_true: allow}
 """,
         encoding="utf-8",
     )

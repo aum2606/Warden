@@ -1,0 +1,13 @@
+name: same-priority-escalate-wins-over-allow
+input:
+  principal: agent:fixture-agent
+  authority_chain: [user:aum, agent:fixture-agent]
+  tool: fixture.tie-escalate
+  params: {}
+  context: {}
+  run: {run_id: run-tie-escalate, elapsed_steps: 1, prior_denials: 0}
+  environment: {current_time: "2026-09-24T11:02:00Z", org_settings: {}}
+expect:
+  effect: escalate
+  rule: escalate-rule
+  failed_conditions: [review]

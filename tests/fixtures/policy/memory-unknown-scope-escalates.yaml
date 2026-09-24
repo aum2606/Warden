@@ -1,0 +1,13 @@
+name: unknown-memory-scope-requires-approval
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: memory.write
+  params: {scope: team, key: release, value: Friday}
+  context: {min_trust: internal, sources: []}
+  run: {run_id: run-memory-team, elapsed_steps: 2, prior_denials: 0}
+  environment: {current_time: "2026-09-24T10:12:00Z", org_settings: {}}
+expect:
+  effect: escalate
+  rule: memory-org-write
+  failed_conditions: [non-org-scope]

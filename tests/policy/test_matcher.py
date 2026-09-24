@@ -38,7 +38,7 @@ def _rule(
         conditions=(),
         effect=PolicyEffectMap(
             when_all_true=PolicyEffect.ALLOW,
-            when_any_false=PolicyEffect.DENY,
+            combine="most_restrictive",
         ),
         escalation=None,
         obligations=(),
