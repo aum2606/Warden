@@ -107,6 +107,25 @@ second failure cannot weaken an outcome.
 **Spec impact.** Replaces the aggregate effect shape in Section 6 and resolves
 the Gmail behavior described in Sections 11 and 18.
 
+## 2026-09-24 - Separate condition and rule combination levels
+
+**Context.** Condition failures within one rule and outcomes from multiple
+matching rules require different precedence. Applying effect restrictiveness
+globally would let the lowest-priority `default-deny` rule override every
+specific rule and deny every action.
+
+**Decision.** Within a rule, failed conditions combine by effect severity:
+`deny > escalate > allow`. Across matching rules, priority wins outright. Only
+rules tied at the highest priority use effect severity as the tie-breaker, with
+rule id providing the final deterministic ordering when both are equal.
+
+**Consequence.** A higher-priority allow overrides a lower-priority deny, while
+an equal-priority deny overrides an allow. The explicit default-deny rule acts
+only as the lowest-priority fallback and cannot shadow specific authorization.
+
+**Spec impact.** Records the two distinct combining levels defined by Section
+6 and the Session 4 effect model.
+
 ## 2026-09-24 - Dedicated PostgreSQL application role
 
 **Context.** The local database login owns the schema, and PostgreSQL table
