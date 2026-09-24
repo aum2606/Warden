@@ -1,0 +1,21 @@
+name: unmatched-user-action-is-denied
+input:
+  principal: user:aum
+  authority_chain: [user:aum]
+  tool: github.issue.delete
+  params:
+    issue_number: 7
+  context:
+    min_trust: trusted
+    sources: []
+  run:
+    run_id: run-default-user
+    elapsed_steps: 1
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:03:00Z"
+    org_settings: {}
+expect:
+  effect: deny
+  rule: default-deny
+  failed_conditions: []

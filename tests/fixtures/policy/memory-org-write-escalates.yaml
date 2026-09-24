@@ -1,0 +1,23 @@
+name: organization-memory-write-requires-approval
+input:
+  principal: agent:orchestrator
+  authority_chain: [user:aum, agent:orchestrator]
+  tool: memory.write
+  params:
+    scope: org
+    key: release-window
+    value: Friday
+  context:
+    min_trust: trusted
+    sources: [chunk-handbook]
+  run:
+    run_id: run-memory-org
+    elapsed_steps: 3
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:14:00Z"
+    org_settings: {}
+expect:
+  effect: escalate
+  rule: memory-org-write
+  failed_conditions: []

@@ -1,0 +1,22 @@
+name: github-issue-create-is-allowed
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: github.issue.create
+  params:
+    repository: aum2606/Warden
+    title: Add policy fixture coverage
+  context:
+    min_trust: internal
+    sources: []
+  run:
+    run_id: run-github-allowed
+    elapsed_steps: 1
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:00:00Z"
+    org_settings: {}
+expect:
+  effect: allow
+  rule: github-issue-create
+  failed_conditions: []

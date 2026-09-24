@@ -1,0 +1,21 @@
+name: unmatched-agent-action-is-denied
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: calendar.delete
+  params:
+    event_id: event-1
+  context:
+    min_trust: trusted
+    sources: []
+  run:
+    run_id: run-default-agent
+    elapsed_steps: 1
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:02:00Z"
+    org_settings: {}
+expect:
+  effect: deny
+  rule: default-deny
+  failed_conditions: []

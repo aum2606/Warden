@@ -1,0 +1,23 @@
+name: three-attachments-meet-the-size-bound
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: gmail.send
+  params:
+    to: [reviewer@acme.example]
+    subject: Boundary review
+    attachment_count: 3
+  context:
+    min_trust: internal
+    sources: []
+  run:
+    run_id: run-mail-boundary
+    elapsed_steps: 2
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:07:00Z"
+    org_settings: {}
+expect:
+  effect: allow
+  rule: gmail-external-send
+  failed_conditions: []
