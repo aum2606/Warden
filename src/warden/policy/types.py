@@ -3,12 +3,18 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import NewType
+from uuid import UUID
 
 from warden.identity.types import PrincipalKind
 
 from .models import PolicyDocument, PrincipalSelectorId, ToolName
 
 SourceDigest = NewType("SourceDigest", str)
+DecisionId = NewType("DecisionId", UUID)
+PolicyBundleId = NewType("PolicyBundleId", UUID)
+RunId = NewType("RunId", UUID)
+StepId = NewType("StepId", UUID)
+PolicyPrincipalReference = NewType("PolicyPrincipalReference", str)
 
 type JsonScalar = str | int | float | bool | None
 type JsonValue = JsonScalar | list[JsonValue] | dict[str, JsonValue]

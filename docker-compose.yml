@@ -23,6 +23,7 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql+asyncpg://warden:warden@database:5432/warden
+      DATABASE_ROLE: warden_app
       ENVIRONMENT: development
       LOG_LEVEL: INFO
       SESSION_SIGNING_SECRET: ${SESSION_SIGNING_SECRET:?SESSION_SIGNING_SECRET must be set}

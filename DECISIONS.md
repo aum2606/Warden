@@ -122,3 +122,20 @@ attempted decision update fails at the database level. Local development keeps
 migration ownership separate from effective runtime authority.
 
 **Spec impact.** Implements the application-role constraint in Section 7.
+
+## 2026-09-24 - Defer decision run and step foreign keys
+
+**Context.** Session 4 introduces `decisions`, but its required `runs` and
+`steps` parent tables are not created until Session 7. The decision columns are
+required now for the specified record shape.
+
+**Decision.** Store `run_id` and `step_id` as non-null UUID columns in Session 4
+without foreign keys. Add their foreign-key constraints in the migration that
+creates the parent tables. `bundle_id` is constrained immediately because
+`policy_bundles` already exists.
+
+**Consequence.** Decision records already have their final identifiers and
+cannot omit them, while migrations never reference tables that do not exist.
+
+**Spec impact.** Stages the governance schema in Section 7 across its declared
+Session 4 and Session 7 build order.

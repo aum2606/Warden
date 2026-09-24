@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str = "postgresql+asyncpg://warden:warden@127.0.0.1:5432/warden"
+    database_role: str | None = "warden_app"
     log_level: str = "INFO"
     environment: str = "development"
     session_signing_secret: SecretStr

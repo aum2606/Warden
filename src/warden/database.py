@@ -10,9 +10,19 @@ from sqlalchemy.ext.asyncio import (
 AsyncSessionFactory = async_sessionmaker[AsyncSession]
 
 
-def create_database_engine(database_url: str) -> AsyncEngine:
-    """Create the application database engine without opening a connection."""
-    return create_async_engine(database_url, pool_pre_ping=True)
+def create_database_engine(
+    database_url: str,
+    database_role: str | None = None,
+) -> AsyncEngine:
+    """Create an engine that can assume the restricted application role."""
+    connect_args: dict[str, object] = {}
+    if database_role is not None:
+        connect_args["server_settings"] = {"role": database_role}
+    return create_async_engine(
+        database_url,
+        pool_pre_ping=True,
+        connect_args=connect_args,
+    )
 
 
 def create_session_factory(engine: AsyncEngine) -> AsyncSessionFactory:
