@@ -7,6 +7,7 @@ from sqlalchemy import Connection, pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from warden.capability.records import CapabilityRecord
 from warden.config import Settings
 from warden.policy.records import DecisionRecord
 
@@ -17,7 +18,10 @@ if config.config_file_name is not None:
 
 settings = Settings()
 config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
-target_metadata = DecisionRecord.metadata
+if DecisionRecord.metadata is not CapabilityRecord.metadata:
+    message = "governance records must share one Alembic metadata registry"
+    raise RuntimeError(message)
+target_metadata = CapabilityRecord.metadata
 
 
 def run_migrations_offline() -> None:
