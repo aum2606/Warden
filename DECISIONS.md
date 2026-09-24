@@ -158,3 +158,31 @@ cannot omit them, while migrations never reference tables that do not exist.
 
 **Spec impact.** Stages the governance schema in Section 7 across its declared
 Session 4 and Session 7 build order.
+
+## 2026-09-24 - Capability signing, lifetime, schemas, and rejection recording
+
+**Context.** Section 6 specifies signed, expiring, parameter-bound capabilities
+but does not define their wire encoding, key separation, maximum lifetime,
+schema ownership before connectors exist, or the Session 5 audit boundary.
+
+**Decision.** Capability tokens use a compact payload and HMAC-SHA256 signature
+under the dedicated `CAPABILITY_SIGNING_SECRET`. The MAC input starts with the
+constant context `warden.capability.v1` and a null separator. Lifetime defaults
+to 900 seconds and configuration may only shorten that hard ceiling; minting and
+verification use an injected server clock, never caller time. A registry keyed
+by tool name owns explicit fingerprint schemas. Session 5 statically declares
+the GitHub issue and Gmail send schemas; Session 6 connector `describe()` output
+will become the registry source. Unknown tools fail closed with no fallback.
+Capability verification reports rejections through a `RejectionRecorder` port,
+using an in-memory implementation in Session 5 and an audit implementation in
+Session 8. A recorder failure raises and cannot convert a rejection into
+success.
+
+**Consequence.** Capability MACs cannot be confused with signatures from other
+protocols, session credentials cannot sign execution authority, operators
+cannot create long-lived capabilities, callers cannot narrow fingerprint
+coverage, and every failed verification remains closed even before durable
+audit storage exists.
+
+**Spec impact.** Clarifies capability signing, expiry, connector-owned
+canonicalization, and rejection recording in Sections 6, 8, and 16.

@@ -27,6 +27,7 @@ jobs:
     env:
       DATABASE_URL: postgresql+asyncpg://warden:warden@127.0.0.1:5432/warden
       SESSION_SIGNING_SECRET: ci-session-signing-secret-with-32-characters
+      CAPABILITY_SIGNING_SECRET: ci-capability-signing-secret-with-32-characters
       TEST_DATABASE_URL: postgresql+asyncpg://warden:warden@127.0.0.1:5432/warden
     steps:
       - name: Check out repository
