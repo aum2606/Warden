@@ -1,0 +1,23 @@
+name: multiple-internal-recipients-are-allowed
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: gmail.send
+  params:
+    to: [owner@acme.example, approver@acme.example]
+    subject: Review
+    attachment_count: 1
+  context:
+    min_trust: internal
+    sources: [chunk-1, chunk-2]
+  run:
+    run_id: run-mail-multiple
+    elapsed_steps: 2
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:05:00Z"
+    org_settings: {}
+expect:
+  effect: allow
+  rule: gmail-external-send
+  failed_conditions: []

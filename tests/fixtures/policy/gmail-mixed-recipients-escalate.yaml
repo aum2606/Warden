@@ -1,0 +1,23 @@
+name: one-external-recipient-fails-the-all-expression
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: gmail.send
+  params:
+    to: [owner@acme.example, reviewer@external.example]
+    subject: Mixed review
+    attachment_count: 0
+  context:
+    min_trust: internal
+    sources: [chunk-1]
+  run:
+    run_id: run-mail-mixed
+    elapsed_steps: 2
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:09:00Z"
+    org_settings: {}
+expect:
+  effect: escalate
+  rule: gmail-external-send
+  failed_conditions: [recipient-domain]

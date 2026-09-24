@@ -1,0 +1,23 @@
+name: agent-memory-write-is-allowed
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: memory.write
+  params:
+    scope: agent
+    key: repository
+    value: aum2606/Warden
+  context:
+    min_trust: internal
+    sources: [chunk-1]
+  run:
+    run_id: run-memory-agent
+    elapsed_steps: 3
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:16:00Z"
+    org_settings: {}
+expect:
+  effect: allow
+  rule: memory-org-write
+  failed_conditions: [org-scope]

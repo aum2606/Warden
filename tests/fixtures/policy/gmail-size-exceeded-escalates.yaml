@@ -1,0 +1,23 @@
+name: four-attachments-fail-the-size-bound
+input:
+  principal: agent:ops-worker
+  authority_chain: [user:aum, agent:orchestrator, agent:ops-worker]
+  tool: gmail.send
+  params:
+    to: [reviewer@acme.example]
+    subject: Oversized review
+    attachment_count: 4
+  context:
+    min_trust: internal
+    sources: [chunk-1]
+  run:
+    run_id: run-mail-oversized
+    elapsed_steps: 2
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:11:00Z"
+    org_settings: {}
+expect:
+  effect: escalate
+  rule: gmail-external-send
+  failed_conditions: [size-bound]

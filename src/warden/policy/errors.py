@@ -21,3 +21,17 @@ class InvalidPolicyDocumentError(PolicyBundleError):
 
 class EmptyPolicyBundleError(PolicyBundleError):
     """Report a policy directory containing no policy documents."""
+
+
+class PolicyExpressionError(PolicyError):
+    """Report an expression that cannot be safely parsed or evaluated."""
+
+
+class InvalidPolicyFixtureError(PolicyError):
+    """Report a policy fixture that cannot be loaded or executed."""
+
+    def __init__(self, fixture_name: str, detail: str) -> None:
+        """Retain the offending fixture name for deterministic diagnostics."""
+        self.fixture_name = fixture_name
+        self.detail = detail
+        super().__init__(f"invalid policy fixture {fixture_name}: {detail}")

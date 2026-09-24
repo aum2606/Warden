@@ -1,0 +1,22 @@
+name: orchestrator-delegation-is-allowed
+input:
+  principal: agent:orchestrator
+  authority_chain: [user:aum, agent:orchestrator]
+  tool: delegate
+  params:
+    agent: ops-worker
+    scope: [github.issue.create]
+  context:
+    min_trust: internal
+    sources: []
+  run:
+    run_id: run-delegate-allowed
+    elapsed_steps: 1
+    prior_denials: 0
+  environment:
+    current_time: "2026-09-24T09:01:00Z"
+    org_settings: {}
+expect:
+  effect: allow
+  rule: delegate
+  failed_conditions: []
