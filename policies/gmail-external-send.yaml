@@ -1,0 +1,30 @@
+version: 1
+id: gmail-external-send
+description: External mail requires approval and clean provenance
+priority: 100
+match:
+  tool: gmail.send
+  principal:
+    kind: agent
+    id: [ops-worker]
+conditions:
+  - id: recipient-domain
+    expr: 'all(params.to, {. endsWith "@acme.example"})'
+  - id: clean-provenance
+    expr: 'context.min_trust >= "internal"'
+  - id: size-bound
+    expr: params.attachment_count <= 3
+effect:
+  when_all_true: allow
+  when_any_false: escalate
+escalation:
+  approvers: [role:approver]
+  ttl_seconds: 900
+  show:
+    - params.to
+    - params.subject
+    - context.sources
+    - reasoning_trace
+obligations:
+  - redact: params.body
+    unless: approved

@@ -1,0 +1,15 @@
+version: 1
+id: delegate
+description: The orchestrator may delegate work to configured agents
+priority: 100
+match:
+  tool: delegate
+  principal:
+    kind: agent
+    id: [orchestrator]
+conditions: []
+effect:
+  when_all_true: allow
+  when_any_false: deny
+escalation: null
+obligations: []
