@@ -370,6 +370,21 @@ async def test_application_role_can_only_update_consumed_at(
     token, record = await _mint(session_factory)
     assert token
     async with database_engine.begin() as connection:
+        await connection.execute(
+            text(
+                """
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM pg_roles WHERE rolname = 'warden_app'
+                    ) THEN
+                        CREATE ROLE warden_app NOLOGIN;
+                    END IF;
+                END
+                $$
+                """
+            )
+        )
         await connection.execute(text("GRANT warden_app TO CURRENT_USER"))
         await connection.execute(text("GRANT USAGE ON SCHEMA public TO warden_app"))
         await connection.execute(text("GRANT SELECT, INSERT ON capabilities TO warden_app"))
