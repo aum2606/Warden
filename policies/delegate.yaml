@@ -10,6 +10,6 @@ match:
 conditions: []
 effect:
   when_all_true: allow
-  when_any_false: deny
+  combine: most_restrictive
 escalation: null
 obligations: []

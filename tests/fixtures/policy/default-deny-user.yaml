@@ -18,4 +18,4 @@ input:
 expect:
   effect: deny
   rule: default-deny
-  failed_conditions: []
+  failed_conditions: [default-deny]

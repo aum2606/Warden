@@ -7,9 +7,12 @@ match:
   principal:
     kind: "*"
     id: ["*"]
-conditions: []
+conditions:
+  - id: default-deny
+    expr: "false"
+    on_fail: deny
 effect:
-  when_all_true: deny
-  when_any_false: deny
+  when_all_true: allow
+  combine: most_restrictive
 escalation: null
 obligations: []
