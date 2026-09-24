@@ -3,7 +3,7 @@
 Warden is a permission and approval gateway for LLM agents with write access.
 Every proposed tool action is evaluated before execution, and only an allow
 decision can produce a single-use, parameter-bound capability. This repository
-currently contains the project scaffold and a health endpoint for the API.
+currently includes typed identities, role-based sessions, and authority ceilings.
 
 ## Prerequisites
 
@@ -18,8 +18,19 @@ the pgvector extension:
 
 ```shell
 cp .env.example .env
-docker compose up --build
+docker compose up --build -d
 ```
+
+Replace the placeholder signing secret and seed password in `.env` before
+starting the services. Apply the schema and load the local identity fixture with:
+
+```shell
+uv run alembic upgrade head
+uv run warden-seed
+```
+
+The fixture creates `owner@warden.local`, `approver@warden.local`, and
+`member@warden.local` with the password supplied through `SEED_PASSWORD`.
 
 The health endpoint is available at `http://localhost:8000/health`. Stop the
 services with `docker compose down`.

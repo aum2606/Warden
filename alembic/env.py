@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 from warden.config import Settings
+from warden.identity.models import IdentityBase
 
 config = context.config
 
@@ -16,7 +17,7 @@ if config.config_file_name is not None:
 
 settings = Settings()
 config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
-target_metadata = None
+target_metadata = IdentityBase.metadata
 
 
 def run_migrations_offline() -> None:

@@ -6,9 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "alembic",
+    "argon2-cffi",
     "asyncpg",
     "fastapi",
     "httpx",
+    "pyjwt",
     "pydantic",
     "pydantic-settings",
     "pyyaml",
@@ -16,6 +18,16 @@ dependencies = [
     "structlog",
     "uvicorn",
 ]
+
+[project.scripts]
+warden-seed = "warden.seed:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/warden"]
 
 [dependency-groups]
 dev = [
@@ -43,7 +55,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "alembic/**" = ["INP001"]
-"tests/**" = ["INP001", "S101"]
+"tests/**" = ["INP001", "S101", "S105", "S106"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["warden"]
