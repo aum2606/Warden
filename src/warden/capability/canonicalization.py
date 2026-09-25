@@ -84,6 +84,36 @@ def fingerprint_parameters(
     return Fingerprint(f"sha256:{digest}")
 
 
+def fingerprint_value_digest(
+    value: JsonValue,
+    *,
+    recipients: bool = False,
+    free_text: bool = False,
+) -> Fingerprint:
+    """Digest one value using the same normalization declared for its tool field."""
+    if recipients and free_text:
+        message = "a fingerprint value cannot be both recipients and free text"
+        raise CanonicalizationError(message)
+    if recipients:
+        canonical: JsonValue = cast("JsonValue", _canonicalize_recipients(value, "value"))
+    elif free_text:
+        return Fingerprint(_hash_free_text(value, "value"))
+    else:
+        canonical = _canonicalize_value(value)
+    try:
+        encoded = json.dumps(
+            canonical,
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode()
+    except (TypeError, ValueError) as error:
+        message = "fingerprinted value is not a canonical JSON value"
+        raise CanonicalizationError(message) from error
+    return Fingerprint(f"sha256:{hashlib.sha256(encoded).hexdigest()}")
+
+
 def canonicalize_parameters(
     tool: ToolName,
     parameters: Mapping[str, JsonValue],

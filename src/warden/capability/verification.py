@@ -95,7 +95,12 @@ class CapabilityVerifier:
                 failure = RejectionReason.FINGERPRINT
         if failure is not None:
             return await self._reject(claims.cap_id, failure, occurred_at)
-        return VerificationResult(accepted=True, capability_id=claims.cap_id, rejection=None)
+        return VerificationResult(
+            accepted=True,
+            capability_id=claims.cap_id,
+            rejection=None,
+            claims=claims,
+        )
 
     async def _authenticate(
         self,
@@ -164,4 +169,5 @@ class CapabilityVerifier:
             accepted=False,
             capability_id=capability_id,
             rejection=reason,
+            claims=None,
         )

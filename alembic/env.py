@@ -7,6 +7,7 @@ from sqlalchemy import Connection, pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from warden.broker.records import ExecutionRecord
 from warden.capability.records import CapabilityRecord
 from warden.config import Settings
 from warden.policy.records import DecisionRecord
@@ -20,6 +21,9 @@ settings = Settings()
 config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 if DecisionRecord.metadata is not CapabilityRecord.metadata:
     message = "governance records must share one Alembic metadata registry"
+    raise RuntimeError(message)
+if ExecutionRecord.metadata is not CapabilityRecord.metadata:
+    message = "execution records must share one Alembic metadata registry"
     raise RuntimeError(message)
 target_metadata = CapabilityRecord.metadata
 
