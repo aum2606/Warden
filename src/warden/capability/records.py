@@ -10,7 +10,13 @@ from sqlalchemy.orm import Mapped, mapped_column
 from warden.identity.models import IdentityBase
 
 
-class CapabilityRecord(IdentityBase):
+class CapabilityBase(IdentityBase):
+    """Expose the shared declarative registry to downstream execution storage."""
+
+    __abstract__ = True
+
+
+class CapabilityRecord(CapabilityBase):
     """Persist the immutable capability envelope and its one mutable timestamp."""
 
     __tablename__ = "capabilities"

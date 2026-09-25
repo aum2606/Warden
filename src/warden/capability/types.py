@@ -9,6 +9,12 @@ from uuid import UUID
 from warden.policy.models import ToolName
 from warden.policy.types import DecisionId, JsonValue, RunId, StepId
 
+__all__ = [
+    "JsonValue",
+    "RunId",
+    "ToolName",
+]
+
 CAPABILITY_TTL_HARD_CEILING_SECONDS = 900
 CapabilityId = NewType("CapabilityId", UUID)
 CapabilityToken = NewType("CapabilityToken", str)
@@ -52,6 +58,7 @@ class VerificationResult:
     accepted: bool
     capability_id: CapabilityId | None
     rejection: RejectionReason | None
+    claims: CapabilityClaims | None = None
 
 
 @dataclass(frozen=True, slots=True)

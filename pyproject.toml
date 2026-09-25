@@ -70,5 +70,6 @@ files = ["src"]
 addopts = "--strict-config --strict-markers -p no:cacheprovider"
 asyncio_mode = "auto"
 filterwarnings = ["error"]
+markers = ["live: opt-in smoke tests that make calls to configured external systems"]
 pythonpath = ["src"]
 testpaths = ["tests"]

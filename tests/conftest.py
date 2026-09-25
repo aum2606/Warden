@@ -9,7 +9,7 @@ from pydantic import SecretStr
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from warden.app import create_app
-from warden.capability.records import CapabilityRecord
+from warden.broker.records import ExecutionRecord
 from warden.config import Settings
 from warden.database import AsyncSessionFactory, create_database_engine, create_session_factory
 
@@ -42,8 +42,8 @@ async def database_engine(settings: Settings) -> AsyncIterator[AsyncEngine]:
     """Create a clean identity schema for each database-backed test."""
     engine = create_database_engine(settings.database_url)
     async with engine.begin() as connection:
-        await connection.run_sync(CapabilityRecord.metadata.drop_all)
-        await connection.run_sync(CapabilityRecord.metadata.create_all)
+        await connection.run_sync(ExecutionRecord.metadata.drop_all)
+        await connection.run_sync(ExecutionRecord.metadata.create_all)
     yield engine
     await engine.dispose()
 
