@@ -186,3 +186,30 @@ audit storage exists.
 
 **Spec impact.** Clarifies capability signing, expiry, connector-owned
 canonicalization, and rejection recording in Sections 6, 8, and 16.
+
+## 2026-09-25 - Recording-side obligations and broker credential isolation
+
+**Context.** The specification requires the broker to apply obligations but
+does not say whether redaction changes connector-bound parameters. Changing an
+outbound value after capability verification would execute a different action
+from the one fingerprinted and authorized. Session 6 also needs deterministic
+connection selection before multi-account routing exists.
+
+**Decision.** Obligations transform retained execution data only; connectors
+always receive the exact verified parameters. A redacted field is stored as a
+`[REDACTED]` marker with the digest produced by that field's canonicalization
+rule. Session 6 treats `unless: approved` as unmet. Any unrecognized or
+unenforceable obligation denies execution. GitHub tools require exactly one
+active GitHub connection. Its `credential_ref` uses `env:VARIABLE_NAME`, and
+the broker resolves the value only after capability verification. Secret values
+are never retained in invocation records, logs, stored errors, or propagated
+exception payloads.
+
+**Consequence.** The external action remains byte-for-byte faithful to the
+authorized action while records and later UI views omit protected content. The
+digest still proves which canonical value was sent. Ambiguous connection state,
+unknown obligations, and unavailable credentials all fail before an external
+call.
+
+**Spec impact.** Clarifies broker obligations and credential handling in
+Sections 6, 7, 10, and 16.
